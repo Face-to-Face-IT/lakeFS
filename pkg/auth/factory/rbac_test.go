@@ -48,3 +48,23 @@ func TestNewAuthService_InternalRBAC(t *testing.T) {
 		t.Errorf("expected IsAdvancedAuth() to be true for internal RBAC")
 	}
 }
+
+func TestNewAuthService_SimplifiedRBAC(t *testing.T) {
+	ctx := context.Background()
+	cfg := &mockConfig{}
+	cfg.auth.ui.RBAC = config.AuthRBACSimplified
+
+	logger := logging.DummyLogger{}
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Errorf("NewAuthService panicked: %v", r)
+		}
+	}()
+
+	svc := NewAuthService(ctx, cfg, logger, nil, nil)
+
+	if svc.IsAdvancedAuth() {
+		t.Errorf("expected IsAdvancedAuth() to be false for simplified RBAC")
+	}
+}

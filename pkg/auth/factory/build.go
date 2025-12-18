@@ -73,6 +73,17 @@ Please run "lakefs superuser -h" and follow the instructions on how to migrate a
 			kvStore,
 			secretStore,
 			authparams.ServiceCache(baseAuthCfg.Cache),
+			true, // advancedAuth = true for internal mode (full RBAC with policies)
+		)
+		return auth.NewMonitoredAuthService(apiService)
+	}
+
+	if authUICfg.IsAuthUISimplified() {
+		apiService := acl.NewAuthService(
+			kvStore,
+			secretStore,
+			authparams.ServiceCache(baseAuthCfg.Cache),
+			false, // advancedAuth = false for simplified mode (ACL-only)
 		)
 		return auth.NewMonitoredAuthService(apiService)
 	}
